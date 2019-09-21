@@ -110,7 +110,7 @@
 
 <script>
   import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
-  import { required, max, numeric, between } from 'vee-validate/dist/rules';
+  import { required, max, between } from 'vee-validate/dist/rules';
   const URL_REGEX = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
 
   extend('required', {...required, message: "'{_field_}' is required"});
