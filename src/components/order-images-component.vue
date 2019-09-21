@@ -24,7 +24,11 @@
   .img-wrapper img {
     display: block;
     position: absolute;
-    height: 156%;
+    height: auto;
+    width: 100%;
     top: -33px;
+    left: 50%;
+    transform: translateX(-50%);
   }
+
 </style>

@@ -1,3 +1,4 @@
+
 <template>
   <div class="order-component">
     <div class="order-modal">
@@ -37,15 +38,20 @@
   @import url('https://fonts.googleapis.com/css?family=Roboto:300,500,700,900&display=swap');
 
   .order-component {
-    height: 100vh;
     width: 100vw;
+    height: 100vh;
+    min-width: 271px;
+    min-height: 641px;
     font-family: 'Roboto', sans-serif;
+    font-size: 16px;
   }
   .order-component .order-modal {
     position: relative;
     height: 100%;
     width: 100%;
+    background-color: #FFFFFF;
   }
+
   .order-component .order-modal .order-wrapper {
     position: absolute;
     top: 10px;
@@ -97,5 +103,22 @@
     font-size: 0.59em;
     margin-top: 10px;
     color: #2b5da9;
+  }
+
+  @media (min-height: 700px) {
+    .order-component {
+      font-size: 18px;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .order-component .order-modal {
+      max-width: 500px;
+      max-height: 700px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 3px solid #2c68c1;
+      border-radius: 13px;
+    }
   }
 </style>
