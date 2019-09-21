@@ -200,7 +200,6 @@
           }, totalBudget);
 
           return totalBudget.toFixed(2);
-
         }
       }
     },
@@ -214,7 +213,7 @@
       },
       onSubmit(evt) {
         evt.preventDefault();
-        alert(this.totalBudget);
+        this.$emit("submit-budget", this.totalBudget);
       }
     }
   }

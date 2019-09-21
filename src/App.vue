@@ -1,7 +1,12 @@
 <template>
   <div id="app">
     <b-button @click="onShowModal">Show Order Modal</b-button>
-    <order-component :order="order" :visible="showModal" @close="onModalClosed"></order-component>
+    <order-component
+      :order="order"
+      :visible="showModal"
+      @submit-budget="onBudgetSubmitted"
+      @close="onModalClosed"
+    ></order-component>
   </div>
 </template>
 
@@ -82,6 +87,9 @@ export default {
     },
     onModalClosed() {
       this.showModal = false;
+    },
+    onBudgetSubmitted(totalBudget) {
+      alert("Total Budget: " + totalBudget);
     }
   }
 }

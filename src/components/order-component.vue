@@ -14,7 +14,8 @@
           :order-details="order.Order_details"
           :order-options="order.options"
           :reset-form="resetForm"
-          @formReseted="onFormReseted"
+          @form-reseted="onFormReseted"
+          @submit-budget="onBudgetSubmitted"
         />
       </div>
     </div>
@@ -35,7 +36,7 @@
     },
     props: {
       order: Object,
-      visible: Boolean
+      visible: Boolean,
     },
     watch: {
       visible(newValue) {
@@ -53,9 +54,13 @@
         this.resetForm = false;
       },
       onGoBack() {
-        this.resetForm = true;
         this.innerVisible = false;
+        this.resetForm = true;
         this.$emit("close");
+      },
+      onBudgetSubmitted(totalBudget) {
+        this.onGoBack();
+        this.$emit("submit-budget", totalBudget);
       }
     }
   }
