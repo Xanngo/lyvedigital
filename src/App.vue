@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <order-component :order="order"></order-component>
+    <b-button @click="onShowModal">Show Order Modal</b-button>
+    <order-component :order="order" :visible="showModal" @close="onModalClosed"></order-component>
   </div>
 </template>
 
@@ -15,6 +16,7 @@ export default {
   },
   data() {
     return {
+      showModal: false,
       order: {
         "order_description":{
           "id":22,
@@ -72,6 +74,14 @@ export default {
           }
         ]
       }
+    }
+  },
+  methods: {
+    onShowModal() {
+      this.showModal = true;
+    },
+    onModalClosed() {
+      this.showModal = false;
     }
   }
 }

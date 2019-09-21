@@ -1,16 +1,21 @@
 
 <template>
-  <div class="order-component">
+  <div class="order-component" :class="innerVisible? '' : 'hidden'">
     <div class="order-modal">
       <div class="order-wrapper">
         <header>
           <order-images-component :images="order.images"/>
-          <button class="bo-back">
+          <button class="bo-back" @click="onGoBack">
             <i class="fas fa-arrow-left" aria-hidden="true"></i>
           </button>
           <order-description-component :order-description="order.order_description"/>
         </header>
-        <order-form-component :order-details="order.Order_details" :options="order.options"/>
+        <order-form-component
+          :order-details="order.Order_details"
+          :order-options="order.options"
+          :reset-form="resetForm"
+          @formReseted="onFormReseted"
+        />
       </div>
     </div>
   </div>
@@ -29,22 +34,54 @@
       OrderFormComponent,
     },
     props: {
-      order: Object
+      order: Object,
+      visible: Boolean
+    },
+    watch: {
+      visible(newValue) {
+        this.innerVisible = newValue;
+      }
+    },
+    data() {
+      return {
+        innerVisible: this.visible,
+        resetForm: false
+      }
+    },
+    methods: {
+      onFormReseted() {
+        this.resetForm = false;
+      },
+      onGoBack() {
+        this.resetForm = true;
+        this.innerVisible = false;
+        this.$emit("close");
+      }
     }
   }
 </script>
 
 <style>
   @import url('https://fonts.googleapis.com/css?family=Roboto:300,500,700,900&display=swap');
+  @import "../assets/lib/fontawesome/css/fontawesome.min.css";
+  @import "../assets/lib/fontawesome/css/solid.min.css";
 
   .order-component {
-    width: 100vw;
-    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
     min-width: 271px;
     min-height: 641px;
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
   }
+  .order-component.hidden {
+    display: none;
+  }
+
   .order-component .order-modal {
     position: relative;
     height: 100%;

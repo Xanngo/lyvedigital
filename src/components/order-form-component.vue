@@ -1,8 +1,7 @@
-// Tengo que hacer onReset cuando se haga 'back' en el padre
 <template>
   <div class="order-form-component">
       <validation-observer v-slot="{ invalid }">
-        <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+        <b-form @submit="onSubmit" v-if="show">
           <div class="mandatory-fields">
             <validation-provider name="source" rules="required|url" v-slot="{ valid, errors }">
               <b-form-group
@@ -82,9 +81,9 @@
             </div>
             <b-form-checkbox-group class="options" v-model="form.options" name="options">
               <b-container fluid>
-                <b-row class="option" v-for="option in options" :key="option.id">
+                <b-row class="option" v-for="option in orderOptions" :key="option.id">
                   <b-col>{{ option.name }}</b-col>
-                  <b-col class="increase">(add {{ optionIncementLabel(option) }})</b-col>
+                  <b-col class="increase">(add {{ optionLabel(option) }})</b-col>
                   <b-col cols="1">
                     <b-form-checkbox
                       :value="option"
@@ -137,7 +136,8 @@
     },
     props: {
       "order-details": Array,
-      "options": Array
+      "order-options": Array,
+      "reset-form": Boolean
     },
     data() {
       const writerOptions = Array(15).fill(null).map((value, index) => ({ value: index + 1, text: index + 1 }));
@@ -153,6 +153,25 @@
         },
         show: true,
         writersOptions: writerOptions
+      }
+    },
+    watch: {
+      resetForm(newValue) {
+        if (newValue) {
+          // Reset our form values
+          this.form.source = '';
+          this.form.instructions = '';
+          this.form.writers = null;
+          this.form.options = [];
+          this.form.budget = null;
+
+          // Trick to reset/clear native browser form validation state
+          this.show = false;
+          this.$nextTick(() => {
+            this.show = true,
+            this.$emit('form-reseted');
+          })
+        }
       }
     },
     computed: {
@@ -186,7 +205,7 @@
       }
     },
     methods: {
-      optionIncementLabel(option) {
+      optionLabel(option) {
         if (option.increase) {
           return option.increase + "%";
         } else if (option.price) {
@@ -196,26 +215,12 @@
       onSubmit(evt) {
         evt.preventDefault();
         alert(this.totalBudget);
-      },
-      onReset(evt) {
-        evt.preventDefault()
-        // Reset our form values
-        this.form.source = ''
-        this.form.instructions = ''
-        // Trick to reset/clear native browser form validation state
-        this.show = false
-        this.$nextTick(() => {
-          this.show = true
-        })
       }
     }
   }
 </script>
 
 <style>
-  @import "../assets/lib/fontawesome/css/fontawesome.min.css";
-  @import "../assets/lib/fontawesome/css/solid.min.css";
-
   .order-form-component {
     font-size: 0.8em;
     padding-top: 0.5rem;
