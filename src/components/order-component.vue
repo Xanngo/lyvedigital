@@ -101,6 +101,7 @@
     right: 0;
     bottom: 10px;
     border-bottom: 1px solid #ececec;
+    overflow: auto;
   }
 
   .order-component header {

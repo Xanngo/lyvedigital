@@ -54,7 +54,7 @@
                 </validation-provider>
               </b-col>
               <b-col>
-                <validation-provider name="budget" rules="required|numeric|between:5,500" v-slot="{ valid, errors }">
+                <validation-provider name="budget" rules="required|between:5,500" v-slot="{ valid, errors }">
                   <b-form-group
                     id="input-group-budget"
                     label="budget (USD)"
@@ -115,8 +115,7 @@
 
   extend('required', {...required, message: "'{_field_}' is required"});
   extend('max', {...max, message: "There is a maximum of {length} characters"});
-  extend('numeric', {...numeric, message: "'{_field_}' must be a number"});
-  extend('between', {...between, message: "'{_field_}' must be between {min} and {max}"});
+  extend('between', {...between, message: "'{_field_}' must be a number between {min} and {max}"});
   extend('url', {
     validate: (value) => (
       URL_REGEX.test(value)
