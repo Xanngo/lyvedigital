@@ -1,107 +1,140 @@
 // Tengo que hacer onReset cuando se haga 'back' en el padre
 <template>
   <div class="order-form-component">
-      <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-        <div class="mandatory-fields">
-          <b-form-group
-            id="input-group-source"
-            label="source"
-            label-for="input-source"
-          >
-            <b-form-input
-              id="input-source"
-              v-model="form.source"
-              type="text"
-              required
-              :placeholder="sourcePlaceholder"
-            ></b-form-input>
-          </b-form-group>
-
-          <b-form-group id="input-group-instructions" label="instructions" label-for="input-instructions">
-            <b-form-textarea
-              id="input-instructions"
-              v-model="form.instructions"
-              required
-              :placeholder="instructionsPlaceholder"
-              rows="2"
-              no-resize
-            ></b-form-textarea>
-          </b-form-group>
-
-          <b-row class="writers-and-budget">
-            <b-col>
+      <validation-observer v-slot="{ invalid }">
+        <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+          <div class="mandatory-fields">
+            <validation-provider name="source" rules="required|url" v-slot="{ valid, errors }">
               <b-form-group
-                id="input-group-writers"
-                label="number of writers"
-                label-for="input-writers"
+                id="input-group-source"
+                label="source"
+                label-for="input-source"
               >
-                <b-form-select
-                  id="input-writers"
-                  v-model="form.writers"
-                  required
-                  :placeholder="numberWritersPlaceholder"
-                  :options="writersOptions"
-                ></b-form-select>
+                <b-form-input
+                  id="input-source"
+                  v-model="form.source"
+                  type="text"
+                  :state="errors[0] ? false : (valid ? true : null)"
+                  :placeholder="sourcePlaceholder"
+                ></b-form-input>
+                <b-form-invalid-feedback class="inputLiveFeedback">{{ errors[0] }}</b-form-invalid-feedback>
               </b-form-group>
-            </b-col>
-            <b-col>
-              <b-form-group
-                id="input-group-budget"
-                label="budget (USD)"
-                label-for="input-budget"
-              >
-                <b-input-group prepend="$">
-                  <b-form-input
-                    id="input-budget"
-                    v-model="form.budget"
-                    type="text"
-                    required
-                    :placeholder="budgetPlaceholder"
-                  ></b-form-input>
-                </b-input-group>
+            </validation-provider>
+
+            <validation-provider name="instructions" rules="required|max:30" v-slot="{ valid, errors }">
+              <b-form-group id="input-group-instructions" label="instructions" label-for="input-instructions">
+                <b-form-textarea
+                  id="input-instructions"
+                  v-model="form.instructions"
+                  :state="errors[0] ? false : (valid ? true : null)"
+                  :placeholder="instructionsPlaceholder"
+                  rows="2"
+                  no-resize
+                ></b-form-textarea>
+                <b-form-invalid-feedback class="inputLiveFeedback">{{ errors[0] }}</b-form-invalid-feedback>
               </b-form-group>
-            </b-col>
-          </b-row>
-        </div>
-        <div class="optional-fields">
-          <div class="select-option">
-            Please select options (optional)
+            </validation-provider>
+
+            <b-row class="writers-and-budget">
+              <b-col>
+                <validation-provider name="number of writers" rules="required" v-slot="{ valid, errors }">
+                  <b-form-group
+                    id="input-group-writers"
+                    label="number of writers"
+                    label-for="input-writers"
+                  >
+                    <b-form-select
+                      id="input-writers"
+                      v-model="form.writers"
+                      :state="errors[0] ? false : (valid ? true : null)"
+                      :placeholder="numberWritersPlaceholder"
+                      :options="writersOptions"
+                    ></b-form-select>
+                    <b-form-invalid-feedback class="inputLiveFeedback">{{ errors[0] }}</b-form-invalid-feedback>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+              <b-col>
+                <validation-provider name="budget" rules="required|numeric|between:5,500" v-slot="{ valid, errors }">
+                  <b-form-group
+                    id="input-group-budget"
+                    label="budget (USD)"
+                    label-for="input-budget"
+                  >
+                    <b-input-group prepend="$">
+                      <b-form-input
+                        id="input-budget"
+                        v-model="form.budget"
+                        type="text"
+                        :state="errors[0] ? false : (valid ? true : null)"
+                        :placeholder="budgetPlaceholder"
+                      ></b-form-input>
+                    <b-form-invalid-feedback class="inputLiveFeedback">{{ errors[0] }}</b-form-invalid-feedback>
+                    </b-input-group>
+                  </b-form-group>
+                </validation-provider>
+              </b-col>
+            </b-row>
           </div>
-          <b-form-checkbox-group class="options" v-model="form.options" name="options">
-            <b-container fluid>
-              <b-row class="option" v-for="option in options" :key="option.id">
-                <b-col>{{ option.name }}</b-col>
-                <b-col class="increase">(add {{ optionIncementLabel(option) }})</b-col>
-                <b-col cols="1">
-                  <b-form-checkbox
-                    :value="option"
-                  />
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-form-checkbox-group>
-        </div>
-        <b-button class="submit" type="submit" variant="primary">
-              <div class="shopping-cart">
-                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-              </div>
-                Submit
-              <div class="total-budget">
-                $ {{ totalBuget }}
-              </div>
-        </b-button>
-    <!--    <b-button type="reset" variant="danger">Reset</b-button> -->
-      </b-form>
+          <div class="optional-fields">
+            <div class="select-option">
+              Please select options (optional)
+            </div>
+            <b-form-checkbox-group class="options" v-model="form.options" name="options">
+              <b-container fluid>
+                <b-row class="option" v-for="option in options" :key="option.id">
+                  <b-col>{{ option.name }}</b-col>
+                  <b-col class="increase">(add {{ optionIncementLabel(option) }})</b-col>
+                  <b-col cols="1">
+                    <b-form-checkbox
+                      :value="option"
+                    />
+                  </b-col>
+                </b-row>
+              </b-container>
+            </b-form-checkbox-group>
+          </div>
+          <b-button :disabled="invalid" class="submit" type="submit" variant="primary">
+                <div class="shopping-cart">
+                  <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                </div>
+                  Submit
+                <div class="total-budget">
+                  $ {{ totalBudget }}
+                </div>
+          </b-button>
+      <!--    <b-button type="reset" variant="danger">Reset</b-button> -->
+        </b-form>
+      </validation-observer>
     </div>
 </template>
 
 <script>
+  import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
+  import { required, max, numeric, between } from 'vee-validate/dist/rules';
+  const URL_REGEX = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
+
+  extend('required', {...required, message: "'{_field_}' is required"});
+  extend('max', {...max, message: "There is a maximum of {length} characters"});
+  extend('numeric', {...numeric, message: "'{_field_}' must be a number"});
+  extend('between', {...between, message: "'{_field_}' must be between {min} and {max}"});
+  extend('url', {
+    validate: (value) => (
+      URL_REGEX.test(value)
+    ),
+    message: "'{_field_}'' must be valid URL"
+  });
+
   const getPlaceholder = function(orderDetails, name) {
     return orderDetails.find(element => element.name == name).placeholder;
   }
 
   export default {
     name: 'order-form-component',
+    components: {
+      ValidationProvider,
+      ValidationObserver
+    },
     props: {
       "order-details": Array,
       "options": Array
@@ -135,7 +168,7 @@
       budgetPlaceholder() {
         return getPlaceholder(this.orderDetails, "budget");
       },
-      totalBuget() {
+      totalBudget() {
         if (this.form.budget === null || this.form.writers == null) {
           return "-";
         } else {
@@ -157,12 +190,12 @@
         if (option.increase) {
           return option.increase + "%";
         } else if (option.price) {
-          return "$" + option.price
+          return "$" + option.price;
         }
       },
       onSubmit(evt) {
-        evt.preventDefault()
-        alert(JSON.stringify(this.form))
+        evt.preventDefault();
+        alert(this.totalBudget);
       },
       onReset(evt) {
         evt.preventDefault()
@@ -216,6 +249,19 @@
   .order-form-component .form-control::placeholder {
     color: #b9b8bd;
   }
+
+  /* Hide validation 'tick' */
+  .order-form-component .was-validated .form-control:valid,
+  .order-form-component .form-control.is-valid,
+  .order-form-component .was-validated .custom-select:valid,
+  .order-form-component .custom-select.is-valid {
+    background-image: none;
+  }
+  .order-form-component .was-validated .custom-select:valid,
+  .order-form-component .custom-select.is-valid {
+    background-color: #f8f8fa;
+  }
+  /*--*/
 
   .row.writers-and-budget {
     margin-right: 0;
