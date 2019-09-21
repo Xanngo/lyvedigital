@@ -83,7 +83,7 @@
               <b-container fluid>
                 <b-row class="option" v-for="option in orderOptions" :key="option.id">
                   <b-col>{{ option.name }}</b-col>
-                  <b-col class="increase">(add {{ optionLabel(option) }})</b-col>
+                  <b-col class="additional">(add {{ optionLabel(option) }})</b-col>
                   <b-col cols="1">
                     <b-form-checkbox
                       :value="option"
@@ -192,13 +192,15 @@
           return "-";
         } else {
 
-          let totalBudget = this.form.budget * parseInt(this.form.writers);
 
-          totalBudget = this.form.options.reduce( (totalBudget, option) => {
-            return totalBudget * (option.increase ? parseInt(option.increase)/100 + 1 : 1)
-              + (option.price ? parseInt(option.price) : 0);
-          }, totalBudget);
-
+          let totalIncrease = 0;
+          let totalPrice = 0;
+          this.form.options.forEach( (option) => {
+            totalIncrease = totalIncrease +  (option.increase ? parseInt(option.increase) : 0);
+            totalPrice = totalPrice +  (option.price ? parseInt(option.price) : 0);
+          }, 0);
+          const totalBudget = this.form.budget * parseInt(this.form.writers) * ( 1 + totalIncrease/100 )
+            + totalPrice;
           return totalBudget.toFixed(2);
         }
       }
@@ -320,7 +322,7 @@
     background-image: none;
   }
 
-  .options .option .increase {
+  .options .option .additional {
     color: #b1b1b3;
   }
 
