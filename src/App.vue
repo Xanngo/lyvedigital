@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <b-button @click="onShowModal">Show Order Modal</b-button>
+    <b-alert variant="success" :show="success">Order submitted!</b-alert>
+    <b-button class="button" @click="onShowModal">Show Order Modal</b-button>
     <order-component
       :order="order"
       :visible="showModal"
@@ -22,6 +23,7 @@ export default {
   data() {
     return {
       showModal: false,
+      success: false,
       order: {
         "order_description":{
           "id":22,
@@ -84,19 +86,23 @@ export default {
   methods: {
     onShowModal() {
       this.showModal = true;
+      this.success = false;
     },
     onModalClosed() {
       this.showModal = false;
     },
     onBudgetSubmitted(totalBudget) {
       alert("Total Budget: " + totalBudget);
+      this.success = true;
     }
   }
 }
 </script>
 
 <style>
-#app {
+#app .button {
+  display: block;
+  margin: auto;
 }
 
 </style>
